@@ -5,10 +5,13 @@ namespace Openlib_Dumpers
 {
     public class AuthorConverter : Newtonsoft.Json.JsonConverter
     {
+        string cover_url = "https://covers.openlibrary.org/a/id/";
+
         public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
             Author author = new Author();
             List<string> names = new List<string>();
+            List<string> photos = new List<string>();
             List<Links> alllinks = new List<Links>();
 
             List<JObject> links = new List<JObject>();
@@ -19,20 +22,47 @@ namespace Openlib_Dumpers
                 {
                     if (reader.Path == "name")
                         author.Name = Convert.ToString(reader.Value);
-                    else if (reader.Path == "personal_name")
-                        author.PersonalName = Convert.ToString(reader.Value);
+                    else if (reader.Path == "key")
+                        author.Id = Convert.ToString(reader.Value.ToString().Split('/')[2]);
                     else if (reader.Path == "eastern_order")
                         author.EasternOrder = Convert.ToBoolean(reader.Value);
+                    else if (reader.Path == "personal_name")
+                        author.PersonalName = Convert.ToString(reader.Value);
                     else if (reader.Path == "entity_type")
                         author.EntityType = Convert.ToString(reader.Value);
                     else if (reader.Path == "enumeration")
                         author.Enumeration = Convert.ToString(reader.Value);
+                    else if (reader.Path == "title")
+                        author.Title = Convert.ToString(reader.Value);
                     else if (reader.Path.Contains("alternate_names"))
                     {
                         string name = string.Empty;
                         parse_alternate_names(reader, out name);
                         if (!string.IsNullOrEmpty(name))
                             names.Add(name);
+                    }
+                    else if (reader.Path == "last_modified.value")
+                        author.LastModified = Convert.ToDateTime(reader.Value);
+                    else if (reader.Path == "location")
+                        author.Location = Convert.ToString(reader.Value);
+                    else if (reader.Path == "birth_date")
+                        author.BirthDate = Convert.ToString(reader.Value);
+                    else if (reader.Path == "death_date")
+                        author.DeathDate = Convert.ToString(reader.Value);
+                    else if (reader.Path == "bio")
+                        author.Bio = Convert.ToString(reader.Value);
+                    else if (reader.Path == "created")
+                        author.CreatedDate = (Convert.ToString(reader.Value) == Convert.ToString("0001-01-01T00:00:00") ? null : Convert.ToDateTime(reader.Value));
+                    else if (reader.Path == "wikipedia")
+                        author.Wikipedia = Convert.ToString(reader.Value);
+                    else if (reader.Path == "revision")
+                        author.Revision = Convert.ToInt32(reader.Value);
+                    else if (reader.Path.Contains("photos"))
+                    {
+                        string id = string.Empty;
+                        parse_photos(reader, out id);
+                        if (!string.IsNullOrEmpty(id))
+                            photos.Add(id);
                     }
                     else if (reader.Path.Contains("links"))
                     {
@@ -43,12 +73,6 @@ namespace Openlib_Dumpers
                             alllinks.Add(l);
                         }
                     }
-                    else if (reader.Path == "last_modified.value")
-                        author.LastModified = Convert.ToDateTime(reader.Value);
-                    else if (reader.Path == "key")
-                        author.Id = Convert.ToString(reader.Value.ToString().Split('/')[2]);
-                    else if (reader.Path == "title")
-                        author.Title = Convert.ToString(reader.Value);
                 }
             }
 
@@ -66,10 +90,25 @@ namespace Openlib_Dumpers
                 author.Links = links;
             }
 
+            if (photos.Count > 0)
+                author.Photos = photos.ToArray();
+
             if (names.Count > 0)
                 author.AlternateNames = names.ToArray();
 
             return author;
+        }
+
+        void parse_photos(JsonReader reader, out string id)
+        {
+            id = string.Empty;
+            if(reader.Path.Contains("photos"))
+            {
+                if (reader.Path.Contains("photos["))
+                {
+                    id = cover_url + Convert.ToString(reader.Value);
+                }
+            }
         }
 
         private void parse_urls(JsonReader reader, out Links link)

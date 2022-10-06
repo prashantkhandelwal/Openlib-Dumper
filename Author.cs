@@ -35,8 +35,8 @@ namespace Openlib_Dumpers
         [JsonProperty("alternate_names", NullValueHandling = NullValueHandling.Ignore)]
         public string[] AlternateNames { get; set; }
 
-        [JsonProperty("uris", NullValueHandling = NullValueHandling.Ignore)]
-        public string[] Uris { get; set; }
+        //[JsonProperty("uris", NullValueHandling = NullValueHandling.Ignore)]
+        //public string[] Uris { get; set; }
 
         [JsonProperty("bio", NullValueHandling = NullValueHandling.Ignore)]
         public string Bio { get; set; }
@@ -45,16 +45,16 @@ namespace Openlib_Dumpers
         public string Location { get; set; }
 
         [JsonProperty("death_date", NullValueHandling = NullValueHandling.Ignore)]
-        public DateTime DeathDate { get; set; }
+        public string DeathDate { get; set; }
 
         [JsonProperty("birth_date", NullValueHandling = NullValueHandling.Ignore)]
         public string BirthDate { get; set; }
 
         [JsonProperty("last_modified", NullValueHandling = NullValueHandling.Ignore)]
-        public DateTime LastModified { get; set; }
+        public DateTime? LastModified { get; set; }
 
         [JsonProperty("created", NullValueHandling = NullValueHandling.Ignore)]
-        public DateTime CreatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; } 
 
         [JsonProperty("wikipedia", NullValueHandling = NullValueHandling.Ignore)]
         public string Wikipedia { get; set; }
@@ -64,6 +64,9 @@ namespace Openlib_Dumpers
 
         [JsonProperty("links", NullValueHandling = NullValueHandling.Ignore)]
         public List<JObject> Links { get; set; }
+
+        [JsonProperty("revision", NullValueHandling = NullValueHandling.Ignore)]
+        public int Revision { get; set; }
 
     }
 
