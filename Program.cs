@@ -43,7 +43,8 @@ void parse_author(string[] str)
     Author a = JsonConvert.DeserializeObject<Author>(str[4]);
     string s = JsonConvert.SerializeObject(a);
 
-    //save_db(s, "authors");
+    Console.WriteLine(a.Name);
+    save_db(s, "authors");
 }
 
 void save_db(string data, string col)

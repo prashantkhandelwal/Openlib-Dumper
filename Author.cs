@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace Openlib_Dumpers
         public string Id { get; set; }
 
         [JsonProperty("eastern_order", NullValueHandling = NullValueHandling.Ignore)]
-        public bool EasternOrder { get; set; }
+        public bool? EasternOrder { get; set; }
 
         [JsonProperty("personal_name", NullValueHandling = NullValueHandling.Ignore)]
         public string PersonalName { get; set; }
@@ -45,13 +46,27 @@ namespace Openlib_Dumpers
         public string Location { get; set; }
 
         [JsonProperty("death_date", NullValueHandling = NullValueHandling.Ignore)]
-        public string DeathDate { get; set; }
+        public int? DeathDate { get; set; }
 
         [JsonProperty("birth_date", NullValueHandling = NullValueHandling.Ignore)]
-        public string BirthDate { get; set; }
+        public int? BirthDate { get; set; }
+       
+        [JsonProperty("last_modified")]
+        public DateTime LastModified { get; set; }
 
-        [JsonProperty("last_modified", NullValueHandling = NullValueHandling.Ignore)]
-        public DateTime? LastModified { get; set; }
+        //[BsonDateTimeOptions(Kind = DateTimeKind.Local)]
+        //[JsonProperty("last_modified", NullValueHandling = NullValueHandling.Ignore)]
+        //public DateTime LastModified
+        //{
+        //    get
+        //    {
+        //        return _last_modified;
+        //    }
+        //    set
+        //    {
+        //        _last_modified = new DateTime(value.Ticks, DateTimeKind.Utc);
+        //    }
+        //}
 
         [JsonProperty("created", NullValueHandling = NullValueHandling.Ignore)]
         public DateTime? CreatedDate { get; set; } 

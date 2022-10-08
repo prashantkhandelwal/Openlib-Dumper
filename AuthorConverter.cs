@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Globalization;
 
 namespace Openlib_Dumpers
 {
@@ -42,16 +43,41 @@ namespace Openlib_Dumpers
                             names.Add(name);
                     }
                     else if (reader.Path == "last_modified.value")
+                    {
+                        //DateTime date = Convert.ToDateTime(reader.Value);
+                        //string d = date.Day.ToString("00");
+                        //int month = date.Month;
+                        //int year = date.Year;
+                        //author.LastModified = DateTime.SpecifyKind((DateTime.ParseExact($"{d}/{month}/{year}", "dd/MM/yyyy", CultureInfo.InvariantCulture)), DateTimeKind.Utc);
                         author.LastModified = Convert.ToDateTime(reader.Value);
+                    }
                     else if (reader.Path == "location")
                         author.Location = Convert.ToString(reader.Value);
                     else if (reader.Path == "birth_date")
-                        author.BirthDate = Convert.ToString(reader.Value);
+                        author.BirthDate = parse_birth_date(Convert.ToString(reader.Value));
                     else if (reader.Path == "death_date")
-                        author.DeathDate = Convert.ToString(reader.Value);
-                    else if (reader.Path == "bio")
+                    {
+                        int death_year;
+                        if (reader.Value == null)
+                        {
+                            author.DeathDate = null;
+                        }
+                        else
+                        {
+                            bool b = Int32.TryParse(Convert.ToString(reader.Value), out death_year);
+                            if (b)
+                            {
+                                author.DeathDate = death_year;
+                            }
+                            else
+                            {
+                                author.DeathDate = null;
+                            }
+                        }
+                    }
+                    else if (reader.Path == "bio.value")
                         author.Bio = Convert.ToString(reader.Value);
-                    else if (reader.Path == "created")
+                    else if (reader.Path == "created.value")
                         author.CreatedDate = (Convert.ToString(reader.Value) == Convert.ToString("0001-01-01T00:00:00") ? null : Convert.ToDateTime(reader.Value));
                     else if (reader.Path == "wikipedia")
                         author.Wikipedia = Convert.ToString(reader.Value);
@@ -102,16 +128,37 @@ namespace Openlib_Dumpers
         void parse_photos(JsonReader reader, out string id)
         {
             id = string.Empty;
-            if(reader.Path.Contains("photos"))
+            if (reader.Path.Contains("photos"))
             {
                 if (reader.Path.Contains("photos["))
                 {
-                    id = cover_url + Convert.ToString(reader.Value);
+                    id = $"{cover_url}{Convert.ToString(reader.Value)}.jpg";
                 }
             }
         }
 
-        private void parse_urls(JsonReader reader, out Links link)
+        int? parse_birth_date(string bdate)
+        {
+            if(!string.IsNullOrEmpty(bdate))
+            {
+                string[] arr = bdate.Split(' ');
+                foreach (string a in arr)
+                {
+                    int i;
+                    bool t = Int32.TryParse(a, out i);
+                    if(t)
+                    {
+                        if(i > 100 && i < 2022)
+                        {
+                            return i;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        void parse_urls(JsonReader reader, out Links link)
         {
             link = new Links();
             while (reader.Read())
