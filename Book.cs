@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace Openlib_Dumpers
 {
-    public class Books
+    [JsonConverter(typeof(BookConverter))]
+    public class Book
     {
         [JsonProperty("authors", NullValueHandling = NullValueHandling.Ignore)]
         public string[]? Authors { get; set; }
@@ -80,7 +81,7 @@ namespace Openlib_Dumpers
         public DateTime? Created { get; set; }
 
         [JsonProperty("identifiers", NullValueHandling = NullValueHandling.Ignore)]
-        public JObject? Identifiers { get; set; }
+        public List<JObject>? Identifiers { get; set; }
 
         [JsonProperty("key")]
         public string Key { get; set; }
@@ -119,7 +120,7 @@ namespace Openlib_Dumpers
         public string? PhysicalDimensions { get; set; }
 
         [JsonProperty("covers", NullValueHandling = NullValueHandling.Ignore)]
-        public string[] Covers { get; set; }
+        public string[]? Covers { get; set; }
 
         [JsonProperty("physical_format", NullValueHandling = NullValueHandling.Ignore)]
         public string? PhysicalFormat { get; set; }
@@ -136,6 +137,7 @@ namespace Openlib_Dumpers
         [JsonProperty("publish_date", NullValueHandling = NullValueHandling.Ignore)]
         public int? PublishDate { get; set; }
 
+        [Obsolete("Seems to be a part of Publishers.")]
         [JsonProperty("distributors", NullValueHandling = NullValueHandling.Ignore)]
         public string[]? Distributors { get; set; }
 
@@ -151,5 +153,14 @@ namespace Openlib_Dumpers
         [JsonProperty("uri_descriptions", NullValueHandling = NullValueHandling.Ignore)]
         public string[]? URIDescriptions { get; set; }
 
+        [JsonProperty("translated_from", NullValueHandling = NullValueHandling.Ignore)]
+        public string[]? TranslatedFrom { get; set; }
+
+        [JsonProperty("translation_of", NullValueHandling = NullValueHandling.Ignore)]
+        public string? TranslationOf { get; set; }
+
+        // Not using for now.
+        [JsonProperty("accompanying_material", NullValueHandling = NullValueHandling.Ignore)]
+        public string? AccompanyingMaterial { get; set; }
     }
 }

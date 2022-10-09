@@ -9,6 +9,7 @@ string file = @"C:\Users\prash\Downloads\ol_cdump_2022-09-30\ol_cdump_2022-09-30
 
 string type = string.Empty;
 string author_id = string.Empty;
+string book_id = string.Empty;
 JObject obj;
 
 using (System.IO.StreamReader sr = new System.IO.StreamReader(file))
@@ -21,10 +22,12 @@ using (System.IO.StreamReader sr = new System.IO.StreamReader(file))
         type = all_data[0].Replace("/type/", "");
         switch (type)
         {
-            case "author":
+            /*case "author":
                 parse_author(all_data);
+                break;*/
+            case "edition":
+                parse_edition(all_data);
                 break;
-
             default:
                 break;
         }
@@ -61,5 +64,13 @@ void save_db(string data, string col)
 
 void parse_edition(string[] str)
 {
+    JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+    {
+        Formatting = Formatting.Indented,
+    };
 
+    book_id = str[1].Replace("/books/", "");
+    obj = JObject.Parse(str[4]);
+    Book b = JsonConvert.DeserializeObject<Book>(str[4]);
+    string s = JsonConvert.SerializeObject(b);
 }
