@@ -73,4 +73,7 @@ void parse_edition(string[] str)
     obj = JObject.Parse(str[4]);
     Book b = JsonConvert.DeserializeObject<Book>(str[4]);
     string s = JsonConvert.SerializeObject(b);
+
+    Console.WriteLine(b.Title);
+    save_db(s, "books");
 }
