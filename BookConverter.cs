@@ -89,7 +89,7 @@ namespace Openlib_Dumpers
                     else if (reader.Path == "revision")
                         book.Revision = Convert.ToInt32(reader.Value);
                     else if (reader.Path == "latest_revision")
-                        book.LatestRevision = Convert.ToInt32(reader.Value);
+                        book.LatestRevision = (!string.IsNullOrEmpty(Convert.ToString(reader.Value)) ? Convert.ToInt32(reader.Value) : null);
                     else if (reader.Path == "last_modified.value")
                         book.LastModified = Convert.ToDateTime(reader.Value);
                     else if (reader.Path == "created.value")
@@ -111,7 +111,7 @@ namespace Openlib_Dumpers
                     else if (reader.Path.Contains("notes.value"))
                         book.Notes = Convert.ToString(reader.Value);
                     else if (reader.Path == "number_of_pages")
-                        book.NumberOfPages = Convert.ToInt32(reader.Value);
+                        book.NumberOfPages = (!string.IsNullOrEmpty(Convert.ToString(reader.Value)) ? Convert.ToInt32(reader.Value) : null);
                     else if (reader.Path.Contains("oclc_number["))
                         oclcnumbers.Add(Convert.ToString(reader.Value));
                     else if (reader.Path.Contains("lccn["))
@@ -141,7 +141,7 @@ namespace Openlib_Dumpers
                     else if (reader.Path == "copyright_date")
                         book.CopyrightDate = parse_date(Convert.ToString(reader.Value));
                     else if (reader.Path == "scan_on_demand")
-                        book.ScanOnDemand = Convert.ToBoolean(reader.Value);
+                        book.ScanOnDemand = string.IsNullOrEmpty(Convert.ToString(reader.Value)) ? Convert.ToBoolean(reader.Value) : null;
                     else if (reader.Path.Contains("uris["))
                         uris.Add(Convert.ToString(reader.Value));
                     else if (reader.Path.Contains("uri_descriptions["))
