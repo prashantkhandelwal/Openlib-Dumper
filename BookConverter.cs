@@ -110,43 +110,43 @@ namespace Openlib_Dumpers
                         deweydecimalclass.Add(Convert.ToString(reader.Value));
                     else if (reader.Path.Contains("notes.value"))
                         book.Notes = Convert.ToString(reader.Value);
-                    else if (reader.Path.Contains("number_of_pages"))
-                        book.Notes = Convert.ToInt32(reader.Value);
-                    else if (reader.Path.Contains("oclc_number"))
+                    else if (reader.Path == "number_of_pages")
+                        book.NumberOfPages = Convert.ToInt32(reader.Value);
+                    else if (reader.Path.Contains("oclc_number["))
                         oclcnumbers.Add(Convert.ToString(reader.Value));
-                    else if (reader.Path.Contains("lccn"))
+                    else if (reader.Path.Contains("lccn["))
                         lccnnumbers.Add(Convert.ToString(reader.Value));
                     else if (reader.Path == "ocaid")
                         book.OCAID = Convert.ToString(reader.Value);
-                    else if (reader.Path == "isbn_10")
+                    else if (reader.Path.Contains("isbn_10["))
                         isbnlist10.Add(Convert.ToString(reader.Value));
-                    else if (reader.Path == "isbn_13")
+                    else if (reader.Path.Contains("isbn_13["))
                         isbnlist13.Add(Convert.ToString(reader.Value));
                     else if (reader.Path == "weight")
                         book.Weight = Convert.ToString(reader.Value);
                     else if (reader.Path == "physical_dimensions")
                         book.PhysicalDimensions = Convert.ToString(reader.Value);
-                    else if (reader.Path == "covers")
+                    else if (reader.Path.Contains("covers["))
                         coverslist.Add($"{cover_url}{Convert.ToString(reader.Value)}.jpg");
                     else if (reader.Path == "physical_format")
                         book.PhysicalFormat = Convert.ToString(reader.Value);
-                    else if (reader.Path.Contains("publishers"))
+                    else if (reader.Path.Contains("publishers["))
                         publisherslist.Add(Convert.ToString(reader.Value));
                     else if (reader.Path == "publish_country")
                         book.PublishCountry = Convert.ToString(reader.Value);
-                    else if (reader.Path == "publish_places")
-                        publishplaces.Add(Convert.ToString(reader.Value);
+                    else if (reader.Path.Contains("publish_places["))
+                        publishplaces.Add(Convert.ToString(reader.Value));
                     else if (reader.Path == "publish_date")
-                        book.PublishDate = Convert.ToDateTime(reader.Value);
+                        book.PublishDate = parse_date(Convert.ToString(reader.Value));
                     else if (reader.Path == "copyright_date")
-                        book.CopyrightDate = Convert.ToInt32(reader.Value);
+                        book.CopyrightDate = parse_date(Convert.ToString(reader.Value));
                     else if (reader.Path == "scan_on_demand")
                         book.ScanOnDemand = Convert.ToBoolean(reader.Value);
-                    else if (reader.Path == "uris")
+                    else if (reader.Path.Contains("uris["))
                         uris.Add(Convert.ToString(reader.Value));
-                    else if (reader.Path == "uri_descriptions")
+                    else if (reader.Path.Contains("uri_descriptions["))
                         uridescriptions.Add(Convert.ToString(reader.Value));
-                    else if (reader.Path == "translated_from")
+                    else if (reader.Path.Contains("translated_from["))
                         translatedfrom.Add(Convert.ToString(reader.Value));
                     else if (reader.Path == "translation_of")
                         book.TranslationOf = Convert.ToString(reader.Value);
@@ -179,6 +179,27 @@ namespace Openlib_Dumpers
             if (translatedfrom.Count > 0) book.TranslatedFrom = translatedfrom.ToArray();
 
             return book;
+        }
+
+        int? parse_date(string pdate)
+        {
+            if (!string.IsNullOrEmpty(pdate))
+            {
+                string[] arr = pdate.Split(' ');
+                foreach (string a in arr)
+                {
+                    int i;
+                    bool t = Int32.TryParse(a, out i);
+                    if (t)
+                    {
+                        if (i > 100 && i < 2022)
+                        {
+                            return i;
+                        }
+                    }
+                }
+            }
+            return null;
         }
 
         public override bool CanRead => base.CanRead;
